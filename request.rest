@@ -1,0 +1,48 @@
+GET http://localhost:8080/
+
+### Test additions
+POST http://localhost:8080/calculate
+Content-Type: application/json
+
+{
+    "operator": "add",
+    "operands": [3.0, 4.0]
+}
+
+
+### Test subtractions
+POST http://localhost:8080/calculate
+Content-Type: application/json
+
+{
+    "operator": "subtract",
+    "operands": [3.0, 4.0]
+}
+
+### Test subtractions
+POST http://localhost:8080/calculate
+Content-Type: application/json
+
+{
+    "operator": "multiply",
+    "operands": [3.0, 4.0]
+}
+
+
+### Test divisions
+POST http://localhost:8080/calculate
+Content-Type: application/json
+
+{
+    "operator": "divide",
+    "operands": [3.0, 2.0]
+}
+
+### Test divisions by zero
+POST http://localhost:8080/calculate
+Content-Type: application/json
+
+{
+    "operator": "divide",
+    "operands": [3.0, 0.0]
+}
