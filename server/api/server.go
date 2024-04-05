@@ -1,31 +1,64 @@
 package api
 
 import (
+	"encoding/json"
 	"github.com/gorilla/mux"
 	"net/http"
+	"server/app"
 )
-
-type Operation struct {
-	Operator string    `json:"operator"`
-	Operands []float64 `json:"operands"`
-}
 
 type Server struct {
 	*mux.Router
-
-	pastOperations []Operation
+	calculator *app.Calculator
 }
 
 func NewServer() *Server {
 	s := &Server{
-		Router:         mux.NewRouter(),
-		pastOperations: []Operation{},
+		Router:     mux.NewRouter(),
+		calculator: app.NewCalculator(),
 	}
+	s.routes()
 	return s
 }
 
-func (s *Server) Calculate(o Operation) http.HandlerFunc {
+func (s *Server) routes() {
+	s.HandleFunc("/", func(writer http.ResponseWriter, request *http.Request) {
+		_, err := writer.Write([]byte("Hello, World!"))
+		if err != nil {
+			return
+		}
+	})
+	s.HandleFunc("/calculate", s.calculate()).Methods("POST")
+}
+
+func (s *Server) calculate() http.HandlerFunc {
 	return func(writer http.ResponseWriter, request *http.Request) {
+		var operation app.Operation
+		// Decode the request body into the Operation struct
+		// If there is an error, return a 400 Bad Request
+		// with an error message
+		if err := json.NewDecoder(request.Body).Decode(&operation); err != nil {
+			http.Error(writer, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		// Use the Calculator to perform the operation
+		// If there is an error, return a 400 Bad Request
+		// with an error message
+		result, err := s.calculator.Perform(operation)
+
+		if err != nil {
+			http.Error(writer, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		// Encode the result into the response body
+		// If there is an error, return a 500 Internal Server Error
+		// with an error message
+		if err := json.NewEncoder(writer).Encode(*result); err != nil {
+			http.Error(writer, err.Error(), http.StatusInternalServerError)
+			return
+		}
 
 	}
 }
