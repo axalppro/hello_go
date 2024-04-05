@@ -43,7 +43,7 @@ func (c *Calculator) Perform(operation Operation) (*Operation, error) {
 	operation.Result = result
 	c.pastOperations = append(c.pastOperations, operation)
 
-	return &c.pastOperations[len(c.pastOperations)], nil
+	return &c.pastOperations[len(c.pastOperations)-1], nil
 
 }
 
