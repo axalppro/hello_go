@@ -18,6 +18,10 @@ func NewCalculator() *Calculator {
 	}
 }
 
+func (c *Calculator) GetPastOperations() []Operation {
+	return c.pastOperations
+}
+
 // Perform function
 func (c *Calculator) Perform(operation Operation) (*Operation, error) {
 	var result float64

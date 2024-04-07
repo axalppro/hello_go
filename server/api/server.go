@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/gorilla/mux"
 	"net/http"
 	"server/app"
@@ -29,6 +30,17 @@ func (s *Server) routes() {
 		}
 	})
 	s.HandleFunc("/calculate", s.calculate()).Methods("POST")
+	s.HandleFunc("/past", s.getPastOperations()).Methods("GET")
+}
+
+func (s *Server) getPastOperations() http.HandlerFunc {
+	return func(writer http.ResponseWriter, request *http.Request) {
+		operations := s.calculator.GetPastOperations()
+		if err := json.NewEncoder(writer).Encode(operations); err != nil {
+			http.Error(writer, err.Error(), http.StatusInternalServerError)
+			return
+		}
+	}
 }
 
 func (s *Server) calculate() http.HandlerFunc {
@@ -39,6 +51,7 @@ func (s *Server) calculate() http.HandlerFunc {
 		// with an error message
 		if err := json.NewDecoder(request.Body).Decode(&operation); err != nil {
 			http.Error(writer, err.Error(), http.StatusBadRequest)
+			fmt.Println(err)
 			return
 		}
 
@@ -49,6 +62,7 @@ func (s *Server) calculate() http.HandlerFunc {
 
 		if err != nil {
 			http.Error(writer, err.Error(), http.StatusBadRequest)
+			fmt.Println(err)
 			return
 		}
 
@@ -57,6 +71,7 @@ func (s *Server) calculate() http.HandlerFunc {
 		// with an error message
 		if err := json.NewEncoder(writer).Encode(*result); err != nil {
 			http.Error(writer, err.Error(), http.StatusInternalServerError)
+			fmt.Println(err)
 			return
 		}
 
