@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -12,10 +13,16 @@ import (
 func calculate(d []byte) (float64, error) {
 	resp, err := http.Post("http://localhost:8080/calculate", "application/json", bytes.NewBuffer(d))
 	if err != nil {
+		// If there is an error, return 0.0 and create a new error
 		return 0.0, err
 	}
 
+	if resp.StatusCode != http.StatusOK {
+		return 0.0, errors.New(resp.Status)
+	}
+
 	body, err := ioutil.ReadAll(resp.Body)
+
 	if err != nil {
 		fmt.Println("Error:", err)
 		return 0.0, err
