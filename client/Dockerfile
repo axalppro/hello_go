@@ -8,11 +8,11 @@ WORKDIR /app
 COPY . .
 
 # Build the Go app
-RUN go build -o myserver
+RUN go build -o myclient
 
 # Expose the port your app will listen on
 EXPOSE 8080
 
 # Command to run your app
-CMD ["./myserver"]
+CMD ["./myclient"]
 
